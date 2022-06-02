@@ -51,7 +51,7 @@ class ApiAuthController extends BaseController
             $cutomer-> update(['image'=>$filename]);
         }
         $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-        $response = ['token' => $token,'name'=>$user->name,'email'=>$user->email];
+        $response = ['token' => $token,'user_id'=>$user->id,'name'=>$user->name,'email'=>$user->email];
         return  $this->sendResponse($response, 'User register successfully.');
     }
     public function login (Request $request) {
@@ -67,7 +67,7 @@ class ApiAuthController extends BaseController
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
                 $token = $user->createToken('Laravel Password Grant Client')->accessToken;
-                $response = ['token' => $token];
+                $response = ['user_id'=> $user->id,'token' => $token];
                 // return response($response, 200);
                 return $this->sendResponse($response, 'User login successfully.');
             } else {
