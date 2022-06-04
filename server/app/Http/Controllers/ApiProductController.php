@@ -61,6 +61,7 @@ class ApiProductController extends Controller
                     $data[] = [
                         'id' => $product->id,
                         'name' => $product->name,
+                        'product_image' => env('AWS_URL').'/'.$product->productImage,
                         'product_disc' => $product->product_disc,
                         'items' => $productitems
                     ];
@@ -102,6 +103,7 @@ class ApiProductController extends Controller
                 $data[] = [
                     'id' => $product->id,
                     'name' => $product->name,
+                    'product_image' => env('AWS_URL').'/'.$product->productImage,
                     'product_disc' => $product->product_disc,
                     'items' => $productitems
                 ];
