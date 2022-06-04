@@ -99,7 +99,7 @@ class ApiProductController extends Controller
                                 'stock_status' => $item->stock_status,
                                 'image1' => str_replace('//', "\\","http://ecommerce-2.s3-website-us-east-1.amazonaws.com") .'\\'.str_replace('//',"\\", $item->image1),
                                 'image2' => str_replace('//', "\\",env('AWS_URL') .'\\'. $item->image2),
-                                'image3' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('//',"\\", $item->image3),
+                                'image3' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image3),
                                 'image4' => env('AWS_URL') . '/' . $item->image4,
                                 'image5' => env('AWS_URL') . '/' . $item->image5,
                             ];
