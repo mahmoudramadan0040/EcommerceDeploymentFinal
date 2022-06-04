@@ -51,11 +51,11 @@ class ApiProductController extends Controller
                                     'qty' => $item->qty,
                                     'sku' => $item->sku,
                                     'stock_status' => $item->stock_status,
-                                    'image1' => env('AWS_URL') . '/' . $item->image1,
-                                    'image2' => env('AWS_URL') . '/' . $item->image2,
-                                    'image3' => env('AWS_URL') . '/' . $item->image3,
-                                    'image4' => env('AWS_URL') . '/' . $item->image4,
-                                    'image5' => env('AWS_URL') . '/' . $item->image5,
+                                    'image1' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image1),
+                                    'image2' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image2),
+                                    'image3' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image3),
+                                    'image4' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image4),
+                                    'image5' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image5),
                                 ];
                             } else {
                                 continue;
@@ -65,7 +65,7 @@ class ApiProductController extends Controller
                     $data[] = [
                         'id' => $product->id,
                         'name' => $product->name,
-                        'product_image' => env('AWS_URL') . '/' . $product->productImage,
+                        'product_image' =>str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $product->productImage)  ,
                         'product_disc' => $product->product_disc,
                         'items' => $productitems
                     ];
@@ -97,11 +97,11 @@ class ApiProductController extends Controller
                                 'qty' => $item->qty,
                                 'sku' => $item->sku,
                                 'stock_status' => $item->stock_status,
-                                'image1' => str_replace('//', "\\","http://ecommerce-2.s3-website-us-east-1.amazonaws.com") .'\\'.str_replace('//',"\\", $item->image1),
-                                'image2' => str_replace('//', "\\",env('AWS_URL') .'\\'. $item->image2),
+                                'image1' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image1),
+                                'image2' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image2),
                                 'image3' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image3),
-                                'image4' => env('AWS_URL') . '/' . $item->image4,
-                                'image5' => env('AWS_URL') . '/' . $item->image5,
+                                'image4' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image4),
+                                'image5' => str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $item->image5),
                             ];
                         } else {
                             continue;
@@ -111,7 +111,7 @@ class ApiProductController extends Controller
                 $data[] = [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'product_image' => env('AWS_URL') . '/' . $product->productImage,
+                    'product_image' =>str_replace('//', "\\",env('AWS_URL')) .'\\'.str_replace('/',"\\", $product->productImage),
                     'product_disc' => $product->product_disc,
                     'items' => $productitems
                 ];
