@@ -8,6 +8,7 @@ use App\Order;
 use App\OrderItem;
 use App\PaymentType;
 use App\PaymentCard;
+use App\ProductDetail;
 use Validator;
 use App\Http\Controllers\BaseController as BaseController;
 
@@ -50,24 +51,74 @@ class OrderController extends BaseController
             'order_user_id' => $request['order_user_id']
         ]);
         foreach ($request['order_items'] as $order_item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'qty' => $order_item['qty'],
-                'price' => $order_item['price'],
-                'name' => $order_item['name'],
-                'sku' => $order_item['sku'],
-                'color' => $order_item['color'],
-                'size' => $order_item['size'],
-            ]);
+            $product_item = ProductDetail::where('id', '=', $order_item['id'])->get()->first();
+            $item_qty = $product_item['qty'];
+
+            if (($item_qty - $order_item['qty']) > 0) {
+                $new_qty = $item_qty - $order_item['qty'];
+                ProductDetail::where('id', '=', $order_item['id'])->update(array(
+                    'qty'      => $new_qty,
+                ));
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'qty' => $order_item['qty'],
+                    'price' => $order_item['price'],
+                    'name' => $order_item['name'],
+                    'sku' => $order_item['sku'],
+                    'color' => $order_item['color'],
+                    'size' => $order_item['size'],
+                ]);
+            } else if (($item_qty - $order_item['qty']) == 0) {
+
+                $new_qty = $item_qty - $order_item['qty'];
+                ProductDetail::where('id', '=', $order_item['id'])->update(array(
+                    'qty'      => $new_qty,
+                    'stock_status' => 'out-stock'
+                ));
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'qty' => $order_item['qty'],
+                    'price' => $order_item['price'],
+                    'name' => $order_item['name'],
+                    'sku' => $order_item['sku'],
+                    'color' => $order_item['color'],
+                    'size' => $order_item['size'],
+                ]);
+            } else {
+                $response =  $this->getResponse(0, "qty_available:".$item_qty  , $order_item);
+                $order->delete();
+                return $response;
+                break;
+            }
+
+            // var_dump($item_qty);
+            // die();
+
+            // ProductDetail::where('id','=',$order_item['id'])->update( array(
+            //     'qty'      => $edit['username'],
+            // ));
+
+            // OrderItem::create([
+            //     'order_id' => $order->id,
+            //     'qty' => $order_item['qty'],
+            //     'price' => $order_item['price'],
+            //     'name' => $order_item['name'],
+            //     'sku' => $order_item['sku'],
+            //     'color' => $order_item['color'],
+            //     'size' => $order_item['size'],
+            // ]);
         }
 
-        return response(['success' => 'Order created successfully'], 200);
-    }
+        $response =  $this->getResponse(1, "created");
+        return $response;   
+     }
 
     // show all order fro cutomer 
     public function showAllOrder($id)
     {
-        $validator = Validator::make(['id'=>$id], [
+        $validator = Validator::make(['id' => $id], [
             'id' => 'required|integer',
         ]);
         if ($validator->fails()) {
@@ -88,7 +139,7 @@ class OrderController extends BaseController
     // show all order item for order using order id 
     public function showOrderItems($id)
     {
-        $validator = Validator::make(['id'=>$id], [
+        $validator = Validator::make(['id' => $id], [
             'id' => 'required|integer',
         ]);
         if ($validator->fails()) {
@@ -106,7 +157,7 @@ class OrderController extends BaseController
     // delete one order with all related order item
     public function deleteOrder($id)
     {
-        $validator = Validator::make(['id'=>$id], [
+        $validator = Validator::make(['id' => $id], [
             'id' => 'required|integer',
         ]);
         if ($validator->fails()) {
@@ -118,7 +169,7 @@ class OrderController extends BaseController
             return response($response, 422);
         }
         $orderItems = OrderItem::where('order_id', $id)->delete();
-        
+
         $order->delete();
         return response(['success' => 'Order deleted successfully'], 200);
     }
