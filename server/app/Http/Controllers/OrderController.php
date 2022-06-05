@@ -9,6 +9,7 @@ use App\OrderItem;
 use App\PaymentType;
 use App\PaymentCard;
 use App\ProductDetail;
+use App\Coupon;
 use Validator;
 use App\Http\Controllers\BaseController as BaseController;
 
@@ -40,16 +41,47 @@ class OrderController extends BaseController
         if ($validator->fails()) {
             return response(['errors' => $validator->errors()->all()], 422);
         }
-        $order = Order::create([
-            'duration' => $request['duration'],
-            'total_price' => $request['total_price'],
-            'tax' => $request['tax'],
-            'coupon_code' => $request['coupon_code'],
-            'order_states_id' => $request['order_states_id'],
-            'order_payment_type_id' => $request['order_payment_type_id'],
-            'order_visa_card_id' => $request['order_visa_card_id'],
-            'order_user_id' => $request['order_user_id']
-        ]);
+
+        if (!empty($request['coupon_code'])) {
+            $order_coupon = Coupon::where('code', '=', $request['coupon_code'])->get()->first();
+            
+
+            if (!empty($order_coupon)) {
+                $coupone_disc = $order_coupon['discount'];
+                $new_order_price =  $request['total_price'] - ($request['total_price'] * ($coupone_disc / 100));
+
+                $order = Order::create([
+                    'duration' => $request['duration'],
+                    'total_price' => $new_order_price ,
+                    'tax' => $request['tax'],
+                    'coupon_code' => $request['coupon_code'],
+                    'order_states_id' => $request['order_states_id'],
+                    'order_payment_type_id' => $request['order_payment_type_id'],
+                    'order_visa_card_id' => $request['order_visa_card_id'],
+                    'order_user_id' => $request['order_user_id']
+                ]);
+            } else {
+
+                $response =  $this->getResponse(0, "coupon expired:" . $request['coupon_code']);
+                return $response;
+            }
+        } else {
+            $order = Order::create([
+                'duration' => $request['duration'],
+                'total_price' => $request['total_price'],
+                'tax' => $request['tax'],
+                'coupon_code' => $request['coupon_code'],
+                'order_states_id' => $request['order_states_id'],
+                'order_payment_type_id' => $request['order_payment_type_id'],
+                'order_visa_card_id' => $request['order_visa_card_id'],
+                'order_user_id' => $request['order_user_id']
+            ]);
+        }
+
+
+
+
+
         foreach ($request['order_items'] as $order_item) {
             $product_item = ProductDetail::where('id', '=', $order_item['id'])->get()->first();
             $item_qty = $product_item['qty'];
@@ -87,7 +119,7 @@ class OrderController extends BaseController
                     'size' => $order_item['size'],
                 ]);
             } else {
-                $response =  $this->getResponse(0, "qty_available:".$item_qty  , $order_item);
+                $response =  $this->getResponse(0, "qty_available:" . $item_qty, $order_item);
                 $order->delete();
                 return $response;
                 break;
@@ -112,8 +144,8 @@ class OrderController extends BaseController
         }
 
         $response =  $this->getResponse(1, "created");
-        return $response;   
-     }
+        return $response;
+    }
 
     // show all order fro cutomer 
     public function showAllOrder($id)
