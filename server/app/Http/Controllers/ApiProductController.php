@@ -19,6 +19,7 @@ class ApiProductController extends Controller
                 $data[] = [
                     'id' => $category->id,
                     'category_name' => $category->category_name,
+                    'category_image' => $category->cat_image,
                 ];
             }
             $response =  $this->getResponse(1, '', $data);
