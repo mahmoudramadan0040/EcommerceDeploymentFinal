@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "ext-exif": "*",
         "ext-gd": "*",
         "fruitcake/laravel-cors": "^2.0",
         "laravel/framework": "^8.75",
@@ -13,8 +14,8 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "league/flysystem-aws-s3-v3": "~1.0",
-        "tcg/voyager": "^1.5",
-        "ext-exif":"*"
+        "phpmailer/phpmailer": "^6.6",
+        "tcg/voyager": "^1.5"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
