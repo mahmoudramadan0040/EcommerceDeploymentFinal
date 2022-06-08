@@ -145,47 +145,40 @@ class OrderController extends BaseController
 
         //above
 
-        //require base_path("vendor/autoload.php");
-        $yahoo_mail = new PHPMailer(true);     // Passing `true` enables exceptions
+        $mail = new PHPMailer(true);     // Passing `true` enables exceptions
 
-        $yahoo_mail->IsSMTP();
-        $yahoo_mail->SMTPDebug = true;
-        $yahoo_mail->SMTPAuth = true;
+        $mail->IsSMTP();
+        $mail->SMTPDebug = true;
+        $mail->SMTPAuth = true;
         // Send email using Yahoo SMTP server
-        $yahoo_mail->Host = 'smtp.gmail.com';
+        $mail->Host = 'smtp.gmail.com';
         // port for Send email
 
-        $yahoo_mail->SMTPSecure = 'tls';
-        $yahoo_mail->Port = 587;
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
 
 
-        $yahoo_mail->Username = 'ecommshop20@gmail.com';
-        $yahoo_mail->Password = 'gzrwtokczgeyisrc';
+        $mail->Username = 'ecommshop20@gmail.com';
+        $mail->Password = 'gzrwtokczgeyisrc';
 
 
 
-        $yahoo_mail->From = 'ecommshop20@gmail.com';
-        $yahoo_mail->FromName = 'Dolce Shop'; // frome name
-        $yahoo_mail->AddAddress('adel.eng20@gmail.com', 'ahmed adel');  // Add a recipient  to name
-        //$yahoo_mail->AddAddress('to-Yahoo-address@Yahoo.com');  // Name is optional
+        $mail->From = 'ecommshop20@gmail.com';
+        $mail->FromName = 'Dolce Shop'; // frome name
+        $mail->AddAddress('adel.eng20@gmail.com', 'ahmed adel');  // Add a recipient  to name
 
 
-        //$yahoo_mail->addCC('fcih1996@gmail.com');
-        //$yahoo_mail->addBCC('ecommshop20@gmail.com');
+        $mail->Subject = 'new Order';
+        $mail->Body    = 'new Order <br>This is the HTML message body <strong>in bold!</strong> <a href="https://ecommerce-app0040.herokuapp.com/admin" target="_blank">DolaceShop.org</a>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients at https://ecommerce-app0040.herokuapp.com/admin';
 
-        //$yahoo_mail->addReplyTo('adel.eng20@gmail.com', 'ahmed adel');
-
-        $yahoo_mail->Subject = 'new Order';
-        $yahoo_mail->Body    = 'new Order <br>This is the HTML message body <strong>in bold!</strong> <a href="https://ecommerce-app0040.herokuapp.com/admin" target="_blank">DolaceShop.org</a>';
-        $yahoo_mail->AltBody = 'This is the body in plain text for non-HTML mail clients at https://ecommerce-app0040.herokuapp.com/admin';
-
-        $yahoo_mail->IsHTML(true); // Set email format to HTML
+        $mail->IsHTML(true); // Set email format to HTML
 
 
-        if (!$yahoo_mail->Send()) {
+        if (!$mail->Send()) {
             echo 'Message could not be sent.';
-            echo 'Mailer Error: ' . $yahoo_mail->ErrorInfo;
-            $response =  $this->getResponse(0, $yahoo_mail->ErrorInfo);
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+            $response =  $this->getResponse(0, $mail->ErrorInfo);
             exit;
         } else {
             echo 'Message of Send email using Yahoo SMTP server has been sent';
