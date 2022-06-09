@@ -108,14 +108,16 @@ class OrderController extends BaseController
                     'size' => $order_item['size'],
                 ]);
                 $itemsContent = "
-                        <td>" . $order_item['name'] . "</td>
-                        <td>" . $order_item['sku'] . "</td>
-                        <td>" . $order_item['color'] . "</td>
-                        <td>" . $order_item['size'] . " h</td>
-                        <td>" . $order_item['qty'] . "</td>
-                        <td>" . $order_item['price'] . "</td>
-                        <td>" . $order_item['qty'] * $order_item['price'] . "</td>
-                    ";
+                        <tr>
+                            <td>" . $order_item['name'] . "</td>
+                            <td>" . $order_item['sku'] . "</td>
+                            <td>" . $order_item['color'] . "</td>
+                            <td>" . $order_item['size'] . " h</td>
+                            <td>" . $order_item['qty'] . "</td>
+                            <td>" . $order_item['price'] . "</td>
+                            <td>" . $order_item['qty'] * $order_item['price'] . "</td>
+                        </tr>
+                        ";
             } else if (($item_qty - $order_item['qty']) == 0) {
 
                 $new_qty = $item_qty - $order_item['qty'];
@@ -134,14 +136,16 @@ class OrderController extends BaseController
                     'size' => $order_item['size'],
                 ]);
                 $itemsContent = "
-                        <td>" . $order_item['name'] . "</td>
-                        <td>" . $order_item['sku'] . "</td>
-                        <td>" . $order_item['color'] . "</td>
-                        <td>" . $order_item['size'] . " h</td>
-                        <td>" . $order_item['qty'] . "</td>
-                        <td>" . $order_item['price'] . "</td>
-                        <td>" . $order_item['qty'] * $order_item['price'] . "</td>
-                    ";
+                        <tr>
+                            <td>" . $order_item['name'] . "</td>
+                            <td>" . $order_item['sku'] . "</td>
+                            <td>" . $order_item['color'] . "</td>
+                            <td>" . $order_item['size'] . " h</td>
+                            <td>" . $order_item['qty'] . "</td>
+                            <td>" . $order_item['price'] . "</td>
+                            <td>" . $order_item['qty'] * $order_item['price'] . "</td>
+                        </tr>
+                        ";
             } else {
                 $response =  $this->getResponse(0, "qty_available:" . $item_qty, $order_item);
                 $order->delete();
