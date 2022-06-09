@@ -93,6 +93,19 @@ class ApiProductController extends Controller
         return response($response)->header('Content-Type', 'application/json');
     }
 
+    public function getProductItemDetailsByItemId($item_id)
+    {
+        $productItemDetails = ProductDetail::where('id', $item_id)->first();
+
+        if (empty($productItemDetails)) {
+            $response =  $this->getResponse(0, 'noItemDetails');
+        } else {
+
+            $response =  $this->getResponse(1, '', $productItemDetails);
+        }
+        return response($response)->header('Content-Type', 'application/json');
+    }
+
     public function getAllProducts()
     {
         $products = Product::where('display', 1)->get();

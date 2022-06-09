@@ -38,6 +38,7 @@ Route::post('/login',[ApiAuthController::class,'login']);
 Route::get('/categories',[ApiProductController::class,'getCategories']);
 Route::get('/products/{category_id}',[ApiProductController::class,'getProductsByCategory']);
 Route::get('/product/items/{product_id}',[ApiProductController::class,'getProductItemsByProductId']);
+Route::get('/product/items/item/{item_id}',[ApiProductController::class,'getProductItemDetailsByItemId']);
 
 Route::get('/allproducts',[ApiProductController::class,'getAllProducts']);
 Route::post('/feedback/store',[FeedbackController::class,'store']);
