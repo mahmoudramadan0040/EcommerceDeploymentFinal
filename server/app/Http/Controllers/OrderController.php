@@ -15,144 +15,252 @@ use App\Http\Controllers\BaseController as BaseController;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Elibyy\TCPDF\Facades\TCPDF;
 
 class OrderController extends BaseController
 {
     // store order with order item 
     public function store(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'duration' => 'required|string',
-        //     'total_price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-        //     'tax' => 'regex:/^\d+(\.\d{1,2})?$/',
-        //     'coupon_code' => 'required|string',
-        //     'order_states_id' => 'required|integer',
-        //     'order_payment_type_id' => 'required|integer',
-        //     'order_visa_card_id' => 'required|integer',
-        //     'order_user_id' => 'required|integer',
+        $validator = Validator::make($request->all(), [
+            'duration' => 'required|string',
+            'total_price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'tax' => 'regex:/^\d+(\.\d{1,2})?$/',
+            'coupon_code' => 'required|string',
+            'order_states_id' => 'required|integer',
+            // 'order_payment_type_id' => 'required|integer',
+            // 'order_visa_card_id' => 'required|integer',
+            'order_user_id' => 'required|integer',
 
-        //     // order item validation 
-        //     'order_items' => 'required|array',
-        //     'order_items.*.qty' => 'required|integer',
-        //     'order_items.*.price' => 'required|integer',
-        //     'order_items.*.name' => 'required|string',
-        //     'order_items.*.sku' => 'required|string',
-        //     'order_items.*.color' => 'required|string',
-        //     'order_items.*.size' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            // order item validation 
+            'order_items' => 'required|array',
+            'order_items.*.qty' => 'required|integer',
+            'order_items.*.price' => 'required|integer',
+            'order_items.*.name' => 'required|string',
+            'order_items.*.sku' => 'required|string',
+            'order_items.*.color' => 'required|string',
+            'order_items.*.size' => 'required|regex:/^\d+(\.\d{1,2})?$/',
 
-        // ]);
-        // if ($validator->fails()) {
-        //     return response(['errors' => $validator->errors()->all()], 422);
-        // }
+        ]);
+        if ($validator->fails()) {
+            return response(['errors' => $validator->errors()->all()], 422);
+        }
 
-        // if (!empty($request['coupon_code'])) {
-        //     $order_coupon = Coupon::where('code', '=', $request['coupon_code'])->get()->first();
-
-
-        //     if (!empty($order_coupon)) {
-        //         $coupone_disc = $order_coupon['discount'];
-        //         $new_order_price =  $request['total_price'] - ($request['total_price'] * ($coupone_disc / 100));
-
-        //         $order = Order::create([
-        //             'duration' => $request['duration'],
-        //             'total_price' => $new_order_price ,
-        //             'tax' => $request['tax'],
-        //             'coupon_code' => $request['coupon_code'],
-        //             'order_states_id' => $request['order_states_id'],
-        //             'order_payment_type_id' => $request['order_payment_type_id'],
-        //             'order_visa_card_id' => $request['order_visa_card_id'],
-        //             'order_user_id' => $request['order_user_id']
-        //         ]);
-        //     } else {
-
-        //         $response =  $this->getResponse(0, "coupon expired:" . $request['coupon_code']);
-        //         return $response;
-        //     }
-        // } else {
-        //     $order = Order::create([
-        //         'duration' => $request['duration'],
-        //         'total_price' => $request['total_price'],
-        //         'tax' => $request['tax'],
-        //         'coupon_code' => $request['coupon_code'],
-        //         'order_states_id' => $request['order_states_id'],
-        //         'order_payment_type_id' => $request['order_payment_type_id'],
-        //         'order_visa_card_id' => $request['order_visa_card_id'],
-        //         'order_user_id' => $request['order_user_id']
-        //     ]);
-        // }
+        $orderCustomer = Customer::where('user_id', '=', $request['order_user_id'])->get()->first();
+        $orderCustomerName = $orderCustomer['name'];
+        $orderCustomerEmail = $orderCustomer['email'];
 
 
-        // foreach ($request['order_items'] as $order_item) {
-        //     $product_item = ProductDetail::where('id', '=', $order_item['id'])->get()->first();
-        //     $item_qty = $product_item['qty'];
+        if (!empty($request['coupon_code'])) {
+            $order_coupon = Coupon::where('code', '=', $request['coupon_code'])->get()->first();
 
-        //     if (($item_qty - $order_item['qty']) > 0) {
-        //         $new_qty = $item_qty - $order_item['qty'];
-        //         ProductDetail::where('id', '=', $order_item['id'])->update(array(
-        //             'qty'      => $new_qty,
-        //         ));
 
-        //         OrderItem::create([
-        //             'order_id' => $order->id,
-        //             'qty' => $order_item['qty'],
-        //             'price' => $order_item['price'],
-        //             'name' => $order_item['name'],
-        //             'sku' => $order_item['sku'],
-        //             'color' => $order_item['color'],
-        //             'size' => $order_item['size'],
-        //         ]);
-        //     } else if (($item_qty - $order_item['qty']) == 0) {
+            if (!empty($order_coupon)) {
+                $coupone_disc = $order_coupon['discount'];
+                $new_order_price =  $request['total_price'] - ($request['total_price'] * ($coupone_disc / 100));
 
-        //         $new_qty = $item_qty - $order_item['qty'];
-        //         ProductDetail::where('id', '=', $order_item['id'])->update(array(
-        //             'qty'      => $new_qty,
-        //             'stock_status' => 'out-stock'
-        //         ));
+                $order = Order::create([
+                    'duration' => $request['duration'],
+                    'total_price' => $new_order_price,
+                    'tax' => $request['tax'],
+                    'coupon_code' => $request['coupon_code'],
+                    'order_states_id' => $request['order_states_id'],
+                    'order_payment_type_id' => $request['order_payment_type_id'],
+                    'order_visa_card_id' => $request['order_visa_card_id'],
+                    'order_user_id' => $request['order_user_id']
+                ]);
+            } else {
 
-        //         OrderItem::create([
-        //             'order_id' => $order->id,
-        //             'qty' => $order_item['qty'],
-        //             'price' => $order_item['price'],
-        //             'name' => $order_item['name'],
-        //             'sku' => $order_item['sku'],
-        //             'color' => $order_item['color'],
-        //             'size' => $order_item['size'],
-        //         ]);
-        //     } else {
-        //         $response =  $this->getResponse(0, "qty_available:" . $item_qty, $order_item);
-        //         $order->delete();
-        //         return $response;
-        //         break;
-        //     }
+                $response =  $this->getResponse(0, "coupon expired:" . $request['coupon_code']);
+                return $response;
+            }
+        } else {
+            $order = Order::create([
+                'duration' => $request['duration'],
+                'total_price' => $request['total_price'],
+                'tax' => $request['tax'],
+                'coupon_code' => $request['coupon_code'],
+                'order_states_id' => $request['order_states_id'],
+                'order_payment_type_id' => $request['order_payment_type_id'],
+                'order_visa_card_id' => $request['order_visa_card_id'],
+                'order_user_id' => $request['order_user_id']
+            ]);
+        }
 
-        //     // var_dump($item_qty);
-        //     // die();
 
-        //     // ProductDetail::where('id','=',$order_item['id'])->update( array(
-        //     //     'qty'      => $edit['username'],
-        //     // ));
+        foreach ($request['order_items'] as $order_item) {
+            $product_item = ProductDetail::where('id', '=', $order_item['id'])->get()->first();
+            $item_qty = $product_item['qty'];
 
-        //     // OrderItem::create([
-        //     //     'order_id' => $order->id,
-        //     //     'qty' => $order_item['qty'],
-        //     //     'price' => $order_item['price'],
-        //     //     'name' => $order_item['name'],
-        //     //     'sku' => $order_item['sku'],
-        //     //     'color' => $order_item['color'],
-        //     //     'size' => $order_item['size'],
-        //     // ]);
-        // }
+            if (($item_qty - $order_item['qty']) > 0) {
+                $new_qty = $item_qty - $order_item['qty'];
+                ProductDetail::where('id', '=', $order_item['id'])->update(array(
+                    'qty'      => $new_qty,
+                ));
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'qty' => $order_item['qty'],
+                    'price' => $order_item['price'],
+                    'name' => $order_item['name'],
+                    'sku' => $order_item['sku'],
+                    'color' => $order_item['color'],
+                    'size' => $order_item['size'],
+                ]);
+                $itemsContent = "
+                        <td>" . $order_item['name'] . "</td>
+                        <td>" . $order_item['sku'] . "</td>
+                        <td>" . $order_item['color'] . "</td>
+                        <td>" . $order_item['size'] . " h</td>
+                        <td>" . $order_item['qty'] . "</td>
+                        <td>" . $order_item['price'] . "</td>
+                        <td>" . $order_item['qty'] * $order_item['price'] . "</td>
+                    ";
+            } else if (($item_qty - $order_item['qty']) == 0) {
+
+                $new_qty = $item_qty - $order_item['qty'];
+                ProductDetail::where('id', '=', $order_item['id'])->update(array(
+                    'qty'      => $new_qty,
+                    'stock_status' => 'out-stock'
+                ));
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'qty' => $order_item['qty'],
+                    'price' => $order_item['price'],
+                    'name' => $order_item['name'],
+                    'sku' => $order_item['sku'],
+                    'color' => $order_item['color'],
+                    'size' => $order_item['size'],
+                ]);
+                $itemsContent = "
+                        <td>" . $order_item['name'] . "</td>
+                        <td>" . $order_item['sku'] . "</td>
+                        <td>" . $order_item['color'] . "</td>
+                        <td>" . $order_item['size'] . " h</td>
+                        <td>" . $order_item['qty'] . "</td>
+                        <td>" . $order_item['price'] . "</td>
+                        <td>" . $order_item['qty'] * $order_item['price'] . "</td>
+                    ";
+            } else {
+                $response =  $this->getResponse(0, "qty_available:" . $item_qty, $order_item);
+                $order->delete();
+                return $response;
+                break;
+            }
+
+            // var_dump($item_qty);
+            // die();
+
+            // ProductDetail::where('id','=',$order_item['id'])->update( array(
+            //     'qty'      => $edit['username'],
+            // ));
+
+            // OrderItem::create([
+            //     'order_id' => $order->id,
+            //     'qty' => $order_item['qty'],
+            //     'price' => $order_item['price'],
+            //     'name' => $order_item['name'],
+            //     'sku' => $order_item['sku'],
+            //     'color' => $order_item['color'],
+            //     'size' => $order_item['size'],
+            // ]);
+        }
 
         //above
+
+        $htmlContent = "
+        <html>
+            <head>
+                <style>
+                    .tableStyle{
+                        margin : auto;
+                        background-color:'#eee';
+                        border : 2px solid #333;
+                    }
+                    .headStyle{
+                        text-align:center;
+                        color:'#333';
+                        border : 2px solid #333;
+                    }
+                    .bodyStyle{
+                        text-align:center;
+                        color:'#333';
+                        border : 2px solid #333;
+                    }
+                    th{
+                        text-align:center;
+                        color:'#333';
+                        border : 2px solid #333;
+                        font-size:18px;
+                        font-weight:bold;
+                        padding: 7px;
+                    }
+                    td{
+                        text-align:center;
+                        color:'#333';
+                        border : 2px solid #333;
+                        font-size:18px;
+                        padding: 7px;
+                    }
+                    heading{
+                        margin:auto;
+                        text-align:center;
+                        font-weight:bold;
+                        font-size:20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div>
+                    <h2>Hello ".$orderCustomerName." , check your Order Detials From Dolce</h2>
+                    <h3>Date : " . date("Y/m/d") . " ------ Time : " . date("h:i:s") . "</h3>
+                </div>
+                <div>
+                    <table class ='tableStyle'>
+                        <thead class ='headStyle'>
+                            <th>Total Price</th>
+                            <th>Tax</th>                            
+                            <th>Coupon Code</th>
+                            <th>Delivery Duration</th>
+                        </thead>
+                        <tbody class ='bodyStyle'>
+                            <td>" . $request['total_price'] . "</td>
+                            <td>" . $request['tax'] . "</td>
+                            <td>" . $request['coupon_code'] . "</td>
+                            <td>" . $request['duration'] . " h</td>
+                        </tbody>
+                    </table>
+                    <hr>
+                    <div class='heading'>
+                        <h3>Order Details</h3>
+                    </div>
+                    
+                    <table class ='tableStyle'>
+                    <thead class ='headStyle'>
+                        <th>item name</th>
+                        <th>sku</th>                            
+                        <th>color</th>
+                        <th>size</th>
+                        <th>qty</th>
+                        <th>price</th>
+                        <th>total item price</th>
+                    </thead>
+                    <tbody class ='bodyStyle'>
+                        " . $itemsContent . "
+                    </tbody>
+                </table>
+                </div>
+            </body>
+        </html>
+        ";
 
         $mail = new PHPMailer(true);     // Passing `true` enables exceptions
 
         $mail->IsSMTP();
         $mail->SMTPDebug = true;
         $mail->SMTPAuth = true;
-        // Send email using Yahoo SMTP server
         $mail->Host = 'smtp.gmail.com';
-        // port for Send email
 
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
@@ -162,15 +270,14 @@ class OrderController extends BaseController
         $mail->Password = 'gzrwtokczgeyisrc';
 
 
-
         $mail->From = 'ecommshop20@gmail.com';
         $mail->FromName = 'Dolce Shop'; // frome name
-        $mail->AddAddress('adel.eng20@gmail.com', 'ahmed adel');  // Add a recipient  to name
+        $mail->AddAddress($orderCustomerEmail, $orderCustomerName);  // Add a recipient  to name
 
 
-        $mail->Subject = 'new Order';
-        $mail->Body    = 'new Order <br>This is the HTML message body <strong>in bold!</strong> <a href="https://ecommerce-app0040.herokuapp.com/admin" target="_blank">DolaceShop.org</a>';
-        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients at https://ecommerce-app0040.herokuapp.com/admin';
+        $mail->Subject = 'Dolce Order';
+        $mail->Body    = $htmlContent;
+        $mail->AltBody = 'Check Your Dolce Order Details';
 
         $mail->IsHTML(true); // Set email format to HTML
 
