@@ -47,6 +47,7 @@ class ApiProductController extends Controller
                             if ($item->display == 1) {
                                 $productitems[] = [
                                     'id' => $item->id,
+                                    'name'=>$item->name,
                                     'color' => $item->color,
                                     'price' => $item->price,
                                     'qty' => $item->qty,
@@ -120,6 +121,7 @@ class ApiProductController extends Controller
                         if ($item->display == 1) {
                             $productitems[] = [
                                 'id' => $item->id,
+                                'name'=> $item->name,
                                 'color' => $item->color,
                                 'price' => $item->price,
                                 'qty' => $item->qty,
