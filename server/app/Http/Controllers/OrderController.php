@@ -31,7 +31,7 @@ class OrderController extends BaseController
             // 'order_payment_type_id' => 'required|integer',
             // 'order_visa_card_id' => 'required|integer',
             'order_user_id' => 'required|integer',
-
+            
             // order item validation 
             'order_items' => 'required|array',
             'order_items.*.qty' => 'required|integer',
@@ -67,6 +67,7 @@ class OrderController extends BaseController
                     'order_states_id' => $request['order_states_id'],
                     'order_payment_type_id' => $request['order_payment_type_id'],
                     'order_visa_card_id' => $request['order_visa_card_id'],
+                    'card_number'=>$request['card_number'],
                     'order_user_id' => $request['order_user_id']
                 ]);
             } else {
@@ -83,6 +84,7 @@ class OrderController extends BaseController
                 'order_states_id' => $request['order_states_id'],
                 'order_payment_type_id' => $request['order_payment_type_id'],
                 'order_visa_card_id' => $request['order_visa_card_id'],
+                'card_number'=>$request['card_number'],
                 'order_user_id' => $request['order_user_id']
             ]);
         }
