@@ -31,7 +31,7 @@ class OrderController extends BaseController
             // 'order_payment_type_id' => 'required|integer',
             // 'order_visa_card_id' => 'required|integer',
             'order_user_id' => 'required|integer',
-            'card_number'=>'required|integer',
+            // 'card_number'=>'required|integer',
             // order item validation 
             'order_items' => 'required|array',
             'order_items.*.qty' => 'required|integer',
