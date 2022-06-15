@@ -262,7 +262,7 @@ class OrderController extends BaseController
         $mail = new PHPMailer(true);     // Passing `true` enables exceptions
 
         $mail->IsSMTP();
-        $mail->SMTPDebug = true;
+        $mail->SMTPDebug = false;
         $mail->SMTPAuth = true;
         $mail->Host = 'smtp.gmail.com';
 
@@ -297,7 +297,7 @@ class OrderController extends BaseController
         }
 
 
-        //$response =  $this->getResponse(1, "created");
+        $response =  $this->getResponse(1, "order created successfully ");
         return $response;
     }
 
