@@ -24,7 +24,10 @@ class Order extends Model
         'order_payment_type_id',
         'order_visa_card_id',
         'order_user_id',
-        'card_number'
+        'card_number',
+        'customer_phone',
+        'billing_address',
+        'shipping_address'
     ];
     // relations between order and customer
     public function customer(){

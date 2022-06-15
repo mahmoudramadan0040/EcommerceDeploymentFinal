@@ -31,6 +31,9 @@ class OrderController extends BaseController
             // 'order_payment_type_id' => 'required|integer',
             // 'order_visa_card_id' => 'required|integer',
             'order_user_id' => 'required|integer',
+            'customer_phone' => 'required|string',
+            'billing_address' => 'required|string',
+            'shipping_address' => 'required|string',
             // 'card_number'=>'required|integer',
             // order item validation 
             'order_items' => 'required|array',
@@ -68,7 +71,10 @@ class OrderController extends BaseController
                     'order_payment_type_id' => $request['order_payment_type_id'],
                     'order_visa_card_id' => $request['order_visa_card_id'],
                     'card_number'=>$request['card_number'],
-                    'order_user_id' => $request['order_user_id']
+                    'order_user_id' => $request['order_user_id'],
+                    'customer_phone'=> $request['customer_phone'],
+                    'shipping_address'=> $request['shipping_address'],
+                    'billing_address'=> $request['billing_address'],
                 ]);
             } else {
 
@@ -85,7 +91,10 @@ class OrderController extends BaseController
                 'order_payment_type_id' => $request['order_payment_type_id'],
                 'order_visa_card_id' => $request['order_visa_card_id'],
                 'card_number'=>$request['card_number'],
-                'order_user_id' => $request['order_user_id']
+                'order_user_id' => $request['order_user_id'],
+                'customer_phone'=> $request['customer_phone'],
+                'shipping_address'=> $request['shipping_address'],
+                'billing_address'=> $request['billing_address'],
             ]);
         }
 
