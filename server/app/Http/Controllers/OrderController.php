@@ -26,7 +26,7 @@ class OrderController extends BaseController
             'duration' => 'required|string',
             'total_price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
             'tax' => 'regex:/^\d+(\.\d{1,2})?$/',
-            'coupon_code' => 'required|string',
+            // 'coupon_code' => 'required|string',
             'order_states_id' => 'required|integer',
             // 'order_payment_type_id' => 'required|integer',
             // 'order_visa_card_id' => 'required|integer',
