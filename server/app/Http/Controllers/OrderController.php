@@ -292,7 +292,7 @@ class OrderController extends BaseController
             $response =  $this->getResponse(0, $mail->ErrorInfo);
             exit;
         } else {
-            echo 'Message of Send email using Yahoo SMTP server has been sent';
+            // echo 'Message of Send email using Yahoo SMTP server has been sent';
             $response =  $this->getResponse(1, 'Message of Send email using Yahoo SMTP server has been sent');
         }
 
