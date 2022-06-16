@@ -26,12 +26,15 @@ class OrderController extends BaseController
             'duration' => 'required|string',
             'total_price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
             'tax' => 'regex:/^\d+(\.\d{1,2})?$/',
-            //'coupon_code' => 'required|string',
+            // 'coupon_code' => 'required|string',
             'order_states_id' => 'required|integer',
             // 'order_payment_type_id' => 'required|integer',
             // 'order_visa_card_id' => 'required|integer',
             'order_user_id' => 'required|integer',
-
+            'customer_phone' => 'required|string',
+            'billing_address' => 'required|string',
+            'shipping_address' => 'required|string',
+            // 'card_number'=>'required|integer',
             // order item validation 
             'order_items' => 'required|array',
             'order_items.*.qty' => 'required|integer',
@@ -67,7 +70,11 @@ class OrderController extends BaseController
                     'order_states_id' => $request['order_states_id'],
                     'order_payment_type_id' => $request['order_payment_type_id'],
                     'order_visa_card_id' => $request['order_visa_card_id'],
-                    'order_user_id' => $request['order_user_id']
+                    'card_number'=>$request['card_number'],
+                    'order_user_id' => $request['order_user_id'],
+                    'customer_phone'=> $request['customer_phone'],
+                    'shipping_address'=> $request['shipping_address'],
+                    'billing_address'=> $request['billing_address'],
                 ]);
             } else {
 
@@ -83,7 +90,11 @@ class OrderController extends BaseController
                 'order_states_id' => $request['order_states_id'],
                 'order_payment_type_id' => $request['order_payment_type_id'],
                 'order_visa_card_id' => $request['order_visa_card_id'],
-                'order_user_id' => $request['order_user_id']
+                'card_number'=>$request['card_number'],
+                'order_user_id' => $request['order_user_id'],
+                'customer_phone'=> $request['customer_phone'],
+                'shipping_address'=> $request['shipping_address'],
+                'billing_address'=> $request['billing_address'],
             ]);
         }
 
@@ -292,12 +303,12 @@ class OrderController extends BaseController
             $response =  $this->getResponse(0, $mail->ErrorInfo);
             exit;
         } else {
-            echo 'Message of Send email using Yahoo SMTP server has been sent';
+            // echo 'Message of Send email using Yahoo SMTP server has been sent';
             $response =  $this->getResponse(1, 'Message of Send email using Yahoo SMTP server has been sent');
         }
 
 
-        $response =  $this->getResponse(1, "created");
+        $response =  $this->getResponse(1, "order created successfully ");
         return $response;
     }
 
